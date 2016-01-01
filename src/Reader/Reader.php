@@ -7,11 +7,16 @@ use Kcs\ParamFetcherBundle\Param\Param;
 use Kcs\ParamFetcherBundle\Util\ResolverTrait;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class Reader implements ReaderInterface, ContainerAwareInterface
 {
-    use ContainerAwareTrait;
     use ResolverTrait;
+
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
 
     /**
      * @var AnnotationReader
@@ -47,6 +52,16 @@ class Reader implements ReaderInterface, ContainerAwareInterface
         }
 
         return $params;
+    }
+
+    /**
+     * Sets the container.
+     *
+     * @param ContainerInterface|null $container A ContainerInterface instance or null
+     */
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->container = $container;
     }
 
     protected function resolve(Param $param)
