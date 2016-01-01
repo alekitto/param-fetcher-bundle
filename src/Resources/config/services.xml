@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="kcs_param_fetcher.controller_listener" class="Kcs\ParamFetcherBundle\EventListener\ControllerListener">
+            <argument type="service" id="kcs_param_fetcher.validator" />
+            <argument type="service" id="kcs_param_fetcher.reader" />
+            <tag name="kernel.event_listener" event="kernel.controller"
+                 method="onKernelController" priority="20" />
+        </service>
+
+        <service id="kcs_param_fetcher.validation_exception_listener" class="Kcs\ParamFetcherBundle\EventListener\ValidationFailedExceptionListener">
+            <tag name="kernel.event_listener" event="kernel.exception"
+                 method="onKernelException" priority="30" />
+        </service>
+
+        <service id="kcs_param_fetcher.validator" class="Kcs\ParamFetcherBundle\Validator\ParamValidator">
+            <argument type="service" id="validator" />
+        </service>
+
+        <service id="kcs_param_fetcher.reader" class="Kcs\ParamFetcherBundle\Reader\Reader">
+            <argument type="service" id="annotation_reader" />
+            <call method="setContainer">
+                <argument type="service" id="service_container" />
+            </call>
+        </service>
+    </services>
+</container>
