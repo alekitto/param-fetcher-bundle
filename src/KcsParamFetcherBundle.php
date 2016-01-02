@@ -4,6 +4,7 @@ namespace Kcs\ParamFetcherBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class KCSParamFetcherBundle extends Bundle
+class KcsParamFetcherBundle extends Bundle
 {
 }
+
