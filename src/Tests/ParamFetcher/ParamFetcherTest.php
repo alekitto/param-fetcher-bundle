@@ -133,4 +133,24 @@ class ParamFetcherTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(3, $all);
         $this->assertEquals(['foo', 'bar', 'barz'], array_keys($all));
     }
+
+    public function testFetchReturnArrayIfParamIsArray()
+    {
+        $params = [];
+
+        $param = $this->prophesize(Param::class);
+        $param->name = 'foo';
+        $param->array = true;
+        $param->fetch(Argument::cetera())->willReturn(1);
+        $params['foo'] = $param->reveal();
+
+        $violationList = $this->prophesize(ConstraintViolationList::class);
+        $violationList->count()->willReturn(0);
+        $this->validator->validate(Argument::type('array'), Argument::cetera())->willReturn($violationList->reveal());
+
+        $fetcher = new ParamFetcher($this->request->reveal(), $this->validator->reveal(), $params);
+
+        $fetched = $fetcher->get('foo');
+        $this->assertInternalType('array', $fetched);
+    }
 }

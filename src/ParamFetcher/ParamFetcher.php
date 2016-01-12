@@ -70,6 +70,10 @@ class ParamFetcher implements ParamFetcherInterface
             $value = $param->default;
         }
 
+        if ($param->array) {
+            $value = (array)$value;
+        }
+
         $violationList = $this->validator->validate($value, $param);
 
         if ($violationList->count() > 0) {
