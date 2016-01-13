@@ -7,6 +7,7 @@ use Kcs\ParamFetcherBundle\Param\Param;
 use Kcs\ParamFetcherBundle\Validator\ParamValidator;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
+use Symfony\Component\Validator\Constraints\All;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\Regex;
@@ -174,5 +175,25 @@ class ParamValidatorTest extends \PHPUnit_Framework_TestCase
             });
 
         $this->paramValidator->validate('foo', $param->reveal());
+    }
+
+    public function testValidateShouldApplyRequirementForEachElementIfParamIsArray()
+    {
+        $param = $this->prophesize(Param::class);
+        $param->requirements = '\d+';
+        $param->array = true;
+
+        $that = $this;
+        $this->validator->validate(Argument::type('array'), Argument::type('array'))
+            ->shouldBeCalledTimes(1)
+            ->will(function ($args) use ($that) {
+                $constraints = $args[1];
+                $that->assertNotEmpty($constraints);
+
+                $constraint = $constraints[0];
+                $that->assertInstanceOf(All::class, $constraint);
+            });
+
+        $this->paramValidator->validate(['foo', '15'], $param->reveal());
     }
 }

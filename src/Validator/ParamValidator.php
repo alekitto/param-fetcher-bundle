@@ -4,6 +4,7 @@ namespace Kcs\ParamFetcherBundle\Validator;
 
 use Kcs\ParamFetcherBundle\Constraint\IncompatibleParams;
 use Kcs\ParamFetcherBundle\Param\Param;
+use Symfony\Component\Validator\Constraints\All;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\Regex;
@@ -42,6 +43,12 @@ class ParamValidator implements ParamValidatorInterface
             $constraint = [];
         }
 
+        if ($param->array) {
+            $constraint = [
+                new All(['constraints' => $constraint])
+            ];
+        }
+
         if ($param->incompatibles) {
             $constraint[] = new IncompatibleParams($param->incompatibles);
         }
@@ -64,9 +71,8 @@ class ParamValidator implements ParamValidatorInterface
             $constraint = new Regex([
                 'pattern' => '#^' . $constraint . '$#xsu',
                 'message' => sprintf(
-                    "%s parameter value '%s' does not match requirements '%s'",
+                    "%s parameter value '{{ value }}' does not match requirements '%s'",
                     $param->name,
-                    $value,
                     $param->requirements
                 )
             ]);
