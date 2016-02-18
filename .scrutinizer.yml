@@ -1,0 +1,6 @@
+filter:
+    excluded_paths:
+        - src/Tests/*
+
+tools:
+    external_code_coverage: true
